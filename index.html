@@ -273,8 +273,20 @@ main.content { flex: 1; padding: 20px 24px 40px; max-width: 1400px; width: 100%;
   width: 16px; height: 16px; border-radius: 50%; background: var(--series-blue);
   color: #0b0e12; font-size: 9px; display: flex; align-items: center; justify-content: center; font-weight: 700;
 }
-.card .actions { display: flex; gap: 6px; flex-wrap: wrap; }
-.card select.mini { font-size: 11px; padding: 4px 6px; border-radius: 6px; border: 1px solid var(--baseline); background: var(--surface-2); color: var(--text-primary); }
+.card .actions { display: flex; gap: 6px; flex-wrap: wrap; min-width: 0; }
+.card .actions > * { min-width: 0; max-width: 100%; }
+.card select.mini {
+  font-size: 11px;
+  padding: 4px 6px;
+  border-radius: 6px;
+  border: 1px solid var(--baseline);
+  background: var(--surface-2);
+  color: var(--text-primary);
+  box-sizing: border-box;
+  flex: 1 1 auto;
+  max-width: 100%;
+  min-width: 0;
+}
 
 .checkbox-row { display: flex; align-items: center; gap: 6px; margin-bottom: 6px; }
 
