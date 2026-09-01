@@ -1740,7 +1740,10 @@ function afterLogin(user) {
 
   const isAdmin = user.role === 'admin';
   const isSupervisor = user.role === 'supervisor';
-  document.getElementById('tabCadastro').classList.toggle('hidden', !(isAdmin || isSupervisor));
+  const isOperador = user.role === 'operador';
+  // Cadastro de notas agora é liberado para os três perfis (admin,
+  // supervisor e operador) — antes só admin/supervisor viam essa aba.
+  document.getElementById('tabCadastro').classList.toggle('hidden', !(isAdmin || isSupervisor || isOperador));
   document.getElementById('tabImportarSienge').classList.toggle('hidden', !(isAdmin || isSupervisor));
   document.getElementById('tabObras').classList.toggle('hidden', !(isAdmin || isSupervisor));
   document.getElementById('tabUsuarios').classList.toggle('hidden', !(isAdmin || isSupervisor));
