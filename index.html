@@ -699,6 +699,19 @@ table.data-table tbody tr:hover { background: var(--surface-1); }
         </div>
 
         <div class="panel">
+          <h2>Consultar nota já cadastrada</h2>
+          <p class="desc">Consulte aqui antes de cadastrar, para não duplicar uma nota que já esteja lançada (o sistema não aceita o mesmo fornecedor + número de nota duas vezes) — ou apenas para localizar e editar uma nota já existente.</p>
+          <div class="filters-row" style="margin-bottom:0;">
+            <div class="field" style="flex:1;min-width:220px;">
+              <label for="consultaNotaInput">Número, fornecedor, obra, destinatário ou chave de acesso</label>
+              <input type="text" id="consultaNotaInput" placeholder="Digite para consultar…" />
+            </div>
+            <button class="btn secondary" id="consultaNotaLimparBtn" type="button">Limpar</button>
+            <span class="legend-note" id="consultaNotaResultado"></span>
+          </div>
+        </div>
+
+        <div class="panel">
           <h2>Últimos cadastros</h2>
           <div style="max-height:480px;overflow-y:auto;">
             <table class="data-table">
@@ -1680,6 +1693,7 @@ async function init() {
   });
   setupNav();
   setupCadastroForm();
+  setupConsultaNotaCadastro();
   setupObraForm();
   setupUsuarioForm();
   setupDistribuicao();
@@ -2962,11 +2976,49 @@ function setupCadastroForm() {
   });
 }
 
+// Texto digitado no campo "Consultar nota já cadastrada" da tela de Cadastro
+// — funciona como o "Localizar nota" do Quadro (mesma função de casamento,
+// notaCasaComBusca), mas filtrando a tabela "Últimos cadastros". Serve tanto
+// para conferir se uma nota já existe antes de cadastrar (evita duplicidade
+// de fornecedor+número) quanto para localizar e editar uma nota existente
+// sem precisar ir até o Quadro.
+let CADASTRO_BUSCA_TEXTO = '';
+
+function setupConsultaNotaCadastro() {
+  const input = document.getElementById('consultaNotaInput');
+  const limparBtn = document.getElementById('consultaNotaLimparBtn');
+  if (!input) return;
+  input.addEventListener('input', () => {
+    CADASTRO_BUSCA_TEXTO = input.value;
+    renderUltimosCadastros();
+  });
+  limparBtn.addEventListener('click', () => {
+    input.value = '';
+    CADASTRO_BUSCA_TEXTO = '';
+    renderUltimosCadastros();
+  });
+}
+
 async function loadUltimosCadastros() {
   try {
     const { notas } = await api.get('/api/notas');
     NOTAS_CACHE = notas;
+    renderUltimosCadastros();
+  } catch (e) {
+    toast(e.message, 'error');
+  }
+}
+
+function renderUltimosCadastros() {
     const isAdmin = CURRENT_USER.role === 'admin';
+    const termo = CADASTRO_BUSCA_TEXTO.trim().toLowerCase();
+    const notas = termo ? NOTAS_CACHE.filter((n) => notaCasaComBusca(n, termo)) : NOTAS_CACHE;
+    const resultadoEl = document.getElementById('consultaNotaResultado');
+    if (resultadoEl) {
+      resultadoEl.textContent = termo
+        ? (notas.length > 0 ? `${notas.length} nota(s) encontrada(s).` : 'Nenhuma nota encontrada com esse termo — pode cadastrar normalmente.')
+        : '';
+    }
     const tbody = document.getElementById('ultimosCadastrosBody');
     tbody.innerHTML = notas.slice(0, 100).map((n) => `
       <tr>
@@ -3000,9 +3052,6 @@ async function loadUltimosCadastros() {
         }
       });
     });
-  } catch (e) {
-    toast(e.message, 'error');
-  }
 }
 
 function setupUsuarioForm() {
