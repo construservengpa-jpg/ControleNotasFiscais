@@ -489,7 +489,7 @@ table.data-table tbody tr:hover { background: var(--surface-1); }
           <div class="filters-row" style="margin-bottom:0;">
             <div class="field" style="flex:1;min-width:220px;">
               <label for="buscaNotaInput">Localizar nota (em qualquer coluna)</label>
-              <input type="text" id="buscaNotaInput" placeholder="Número, fornecedor, obra, destinatário, chave de acesso ou nº do título…" />
+              <input type="text" id="buscaNotaInput" placeholder="Número, fornecedor, obra, destinatário, chave de acesso, nº do título ou responsável…" />
             </div>
             <button class="btn secondary" id="buscaNotaLimparBtn" type="button">Limpar</button>
             <span class="legend-note" id="buscaNotaResultado"></span>
@@ -703,7 +703,7 @@ table.data-table tbody tr:hover { background: var(--surface-1); }
           <p class="desc">Consulte aqui antes de cadastrar, para não duplicar uma nota que já esteja lançada (o sistema não aceita o mesmo fornecedor + número de nota duas vezes) — ou apenas para localizar e editar uma nota já existente.</p>
           <div class="filters-row" style="margin-bottom:0;">
             <div class="field" style="flex:1;min-width:220px;">
-              <label for="consultaNotaInput">Número, fornecedor, obra, destinatário ou chave de acesso</label>
+              <label for="consultaNotaInput">Número, fornecedor, obra, destinatário, chave de acesso ou responsável atual</label>
               <input type="text" id="consultaNotaInput" placeholder="Digite para consultar…" />
             </div>
             <button class="btn secondary" id="consultaNotaLimparBtn" type="button">Limpar</button>
@@ -1619,7 +1619,7 @@ let FINALIZACAO_MOSTRAR_TODAS = false;
 let BOARD_BUSCA_TEXTO = '';
 
 function notaCasaComBusca(n, termo) {
-  const campos = [n.numero, n.fornecedor, n.obra, n.destinatario, n.chaveAcesso, n.numeroTitulo, n.cnpjDestinatario];
+  const campos = [n.numero, n.fornecedor, n.obra, n.destinatario, n.chaveAcesso, n.numeroTitulo, n.cnpjDestinatario, n.assignedToName];
   return campos.some((c) => c && String(c).toLowerCase().includes(termo));
 }
 const selectedEntradas = new Set();
